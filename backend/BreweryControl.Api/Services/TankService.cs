@@ -16,7 +16,7 @@ public class TankService(AppDbContext db)
 
     public async Task<List<Tank>> GetAllAsync() => await db.Tanks.ToListAsync();
 
-    public async Task<Tank?> GetByIdAsync(string id) => await db.Tanks.FindAsync(id);
+    public async Task<Tank?> GetByIdAsync(int id) => await db.Tanks.FindAsync(id);
 
     public async Task<bool> UpdateAsync(int id, string? name, decimal? capacityLiters)
     {
