@@ -1,0 +1,9 @@
+using BreweryControl.Api.Models; 
+using Microsoft.EntityFrameworkCore;
+
+namespace BreweryControl.Api.Data;
+
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+{
+    public DbSet<Tank> Tanks => Set<Tank>();
+}
