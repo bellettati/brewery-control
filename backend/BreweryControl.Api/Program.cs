@@ -1,5 +1,6 @@
 using BreweryControl.Api.Data;
 using BreweryControl.Api.Services;
+using BreweryControl.Api.Middlewares;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,9 @@ builder.Services.AddDbContext<AppDbContext>(o =>
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
         p.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddScoped<TankService>();
 
 var app = builder.Build();
@@ -24,6 +28,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
+app.UseExceptionHandler();
 app.MapControllers();
 
 app.Run();
