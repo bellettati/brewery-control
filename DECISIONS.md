@@ -37,3 +37,19 @@ Ao salvar um registro, o sistema compara as leituras com os parâmetros da
 cerveja e classifica em **Dentro do Padrão**, **Atenção** ou **Fora do Padrão**.
 O resultado é gravado no campo `Status` do registro, o que permite os
 contadores do dashboard.
+
+## Camada de serviço
+
+- **Input types separados dos DTOs** (`CreateBeerInput`, `UpdateBeerInput`):
+  os DTOs ficam restritos à camada HTTP (controller); o service recebe um
+  tipo próprio. Mantém o service independente do HTTP. Regra adotada: usar
+  input types para entidades com muitos campos (Beer); Tank, por ter só 2
+  campos, segue com primitivos.
+
+- **Validação de ranges** (min ≤ max para temp, pH e extrato): centralizada
+  num método `Validate(beer)` compartilhado entre create e update, validando
+  os valores finais da entidade (funciona para updates parciais).
+
+- **Pendência conhecida:** a validação lança `ArgumentException`, que hoje
+  vira 500. Precisa ser mapeada para 400 (Bad Request) — via try/catch no
+  controller ou middleware global de exceções.
