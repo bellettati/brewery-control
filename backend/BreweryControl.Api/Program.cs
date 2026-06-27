@@ -19,6 +19,9 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<TankService>();
+builder.Services.AddScoped<BeerService>();
+builder.Services.AddScoped<ClassificationService>();
+builder.Services.AddScoped<FermentationService>();
 
 var app = builder.Build();
 
