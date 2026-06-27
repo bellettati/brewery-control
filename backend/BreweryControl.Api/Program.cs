@@ -29,6 +29,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    using var scope = app.Services.CreateScope();
+    var sp = scope.ServiceProvider;
+    await DbSeeder.SeedAsync(
+        sp.GetRequiredService<AppDbContext>(),
+        sp.GetRequiredService<BeerService>(),
+        sp.GetRequiredService<TankService>(),
+        sp.GetRequiredService<FermentationService>());
 }
 
 app.UseCors();
