@@ -23,7 +23,7 @@ public class FermentationService(AppDbContext db, ClassificationService classifi
             Temperature = input.Temperature,
             Ph = input.Ph,
             Extract = input.Extract,
-            RecordedAt = DateTime.SpecifyKind(input.RecordedAt, DateTimeKind.Utc), // Postgres requires UTC
+            RecordedAt = DateTime.SpecifyKind(input.RecordedAt, DateTimeKind.Utc),
             Observation = input.Observation,
             Status = classifier.Classify(beer, input.Temperature, input.Ph, input.Extract)
         };

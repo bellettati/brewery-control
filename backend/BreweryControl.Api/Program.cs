@@ -22,6 +22,7 @@ builder.Services.AddScoped<TankService>();
 builder.Services.AddScoped<BeerService>();
 builder.Services.AddScoped<ClassificationService>();
 builder.Services.AddScoped<FermentationService>();
+builder.Services.AddScoped<DashboardService>();
 
 var app = builder.Build();
 
