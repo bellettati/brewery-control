@@ -53,3 +53,45 @@ contadores do dashboard.
 - **Pendência conhecida:** a validação lança `ArgumentException`, que hoje
   vira 500. Precisa ser mapeada para 400 (Bad Request) — via try/catch no
   controller ou middleware global de exceções.
+
+## FermentationRecord e relações
+
+- **Relações via FK + navigation property**: `FermentationRecord` guarda
+  `BeerId`/`TankId` (chaves estrangeiras) e expõe `Beer`/`Tank` (navigation
+  properties). EF resolve a relação por convenção.
+
+- **Lote como campo string** (`BatchNumber`), não entidade própria — o desafio
+  só usa o lote para agrupar o histórico. Modelo de Lote separado fica como
+  melhoria futura.
+
+- **Timestamps em UTC**: o Npgsql exige `DateTime` em UTC. Uso
+  `DateTime.SpecifyKind(..., Utc)` ao salvar.
+
+## Classificação
+
+- **Critério**: cada parâmetro (temperatura, pH, extrato) é avaliado contra a
+  faixa min/máx da cerveja. Dentro da faixa = Dentro do Padrão; fora da faixa
+  mas dentro de uma tolerância = Atenção; além da tolerância = Fora do Padrão.
+
+- **Tolerância = 5% da largura da faixa** (`(max - min) * 0.05`). Escolha
+  documentada e ajustável. Alternativa considerada: margem absoluta fixa por
+  parâmetro (faixas de pH são estreitas, então a % fica pequena).
+
+- **Status geral = o pior dos três parâmetros**: um único parâmetro Fora do
+  Padrão classifica o registro inteiro como Fora do Padrão.
+
+- **Reclassificação no update**: ao editar um registro, o Status é recalculado,
+  já que os valores podem ter mudado.
+
+## Tratamento de erros
+
+- **Middleware global de exceções** (`IExceptionHandler`) mapeia
+  `ArgumentException` → 400, usando o formato padrão `ProblemDetails` (RFC 7807).
+  Mantém os controllers limpos.
+
+## Dashboard
+
+- **Service dedicado** (`DashboardService`) em vez de acessar o DbContext direto
+  no controller, mantendo a separação de camadas.
+- **Query única agrupada** (`GroupBy` por Status) em vez de N contagens
+  separadas — um round-trip ao banco.
