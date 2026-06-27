@@ -1,3 +1,9 @@
+# Brewery Fermentation Control
+
+Aplicação web para registro e acompanhamento de dados fermentativos de cerveja
+(temperatura, pH e extrato), classificando automaticamente cada registro como
+**Dentro do Padrão**, **Atenção** ou **Fora do Padrão**.
+
 ## Como rodar o projeto
 
 ### Pré-requisitos
@@ -20,6 +26,43 @@ dotnet ef database update # aplica as migrations
 dotnet run
 \`\`\`
 A API sobe em http://localhost:5042 (confira a porta no output).
+
+> Em ambiente de desenvolvimento, o banco é populado automaticamente na
+> primeira execução com cervejas, tanques e registros de demonstração
+> (cobrindo as três categorias de classificação). O seed não duplica em
+> execuções seguintes.
+
+## Testes
+
+\`\`\`bash
+cd backend
+dotnet test
+\`\`\`
+Os testes cobrem a regra de classificação fermentativa (dentro do padrão,
+atenção, fora do padrão) e seus casos de limite. O escopo foi mantido focado
+na lógica de negócio central — ver DECISIONS.md para o racional.
+
+## Estrutura do projeto
+
+\`\`\`
+backend/
+├── BreweryControl.Api/ # API ASP.NET Core
+│ ├── Controllers/ # camada HTTP
+│ ├── Services/ # lógica de negócio + classificação
+│ │ └── Inputs/ # input types da camada de serviço
+│ ├── Models/ # entidades EF
+│ ├── Dtos/ # contratos da API (request/response)
+│ ├── Data/ # DbContext + migrations + seed
+│ └── Middleware/ # tratamento global de exceções
+└── BreweryControl.Tests/ # testes unitários (xUnit)
+\`\`\`
+
+## Tecnologias
+
+- .NET 10 / ASP.NET Core (controllers)
+- Entity Framework Core 10 + PostgreSQL (Npgsql)
+- xUnit
+- OpenAPI nativo (Microsoft.AspNetCore.OpenApi)
 
 ## Respostas
 
@@ -49,3 +92,4 @@ e input types (camada de serviço). Ver diagrama em /docs.
 ### 4. Ferramentas de IA utilizadas
 
 [preencher: quais ferramentas, onde ajudaram, o que precisou corrigir]
+\`\`\`

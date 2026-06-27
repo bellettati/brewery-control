@@ -95,3 +95,30 @@ contadores do dashboard.
   no controller, mantendo a separação de camadas.
 - **Query única agrupada** (`GroupBy` por Status) em vez de N contagens
   separadas — um round-trip ao banco.
+
+## Testes
+
+- **Escopo deliberado**: testes unitários apenas na regra de classificação
+  (`ClassificationService`), que é lógica pura (sem dependências) e o núcleo
+  do desafio. Cobrem cada categoria e os limites (exatamente no limite, dentro
+  da tolerância, fora dela, e a regra do "pior parâmetro").
+- **Sem mocks**: a regra de classificação não tem dependências a isolar.
+  Testar services com DbContext exigiria banco em memória ou mock do EF —
+  muito setup para pouco retorno neste escopo, então foi deixado de fora
+  conscientemente.
+- **Framework**: xUnit (padrão do ecossistema .NET).
+
+## Versionamento de pacotes
+
+- Pacotes do EF Core alinhados na versão 10.0.2 (ancorada pelo
+  Npgsql.EntityFrameworkCore.PostgreSQL, que não possui 10.0.9), evitando
+  conflitos de versão entre o projeto da API e o de testes.
+
+## Seed de dados
+
+- **Seeder no startup** (apenas em Development), com guard de idempotência
+  (`if (await db.Beers.AnyAsync()) return;`) para não duplicar a cada restart.
+- **Registros criados via FermentationService**, não inseridos direto no banco,
+  para que a regra de classificação rode de verdade e os Status sejam reais.
+- Dados baseados em perfis fermentativos realistas (IPA, Pilsner, Hefeweizen),
+  com registros propositalmente cobrindo as três categorias de classificação.
