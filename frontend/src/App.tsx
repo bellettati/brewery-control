@@ -4,6 +4,7 @@ import { TanksPage } from "./pages/TanksPage";
 import { BeersPage } from "./pages/BeersPage";
 import { RecordsPage } from "./pages/RecordsPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { BatchHistoryPage } from "./pages/BatchHistoryPage";
 
 function Placeholder({ name }: { name: string }) {
   return <h1 className="text-2xl font-semibold text-ink">{name}</h1>;
@@ -18,10 +19,7 @@ function App() {
           <Route path="beers" element={<BeersPage />} />
           <Route path="tanks" element={<TanksPage />} />
           <Route path="records" element={<RecordsPage />} />
-          <Route
-            path="batches"
-            element={<Placeholder name="Historico de Lotes" />}
-          />
+          <Route path="batches" element={<BatchHistoryPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
