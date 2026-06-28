@@ -1,14 +1,16 @@
 using BreweryControl.Api.Data;
 using BreweryControl.Api.Models;
 using BreweryControl.Api.Services.Inputs;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace BreweryControl.Api.Services;
 
-public class BeerService(AppDbContext db) 
+public class BeerService(AppDbContext db)
 {
-    private void Validate(Beer beer) 
+    // Valida as faixas (mínimo não pode ultrapassar o máximo). Recebe a entidade
+    // já com os valores finais aplicados, então serve tanto para create quanto
+    // para update parcial — uma única fonte da regra.
+    private void Validate(Beer beer)
     {
         if (beer.TempMin > beer.TempMax) throw new ArgumentException("TempMin cannot exceed TempMax");
         if (beer.PhMin > beer.PhMax) throw new ArgumentException("PhMin cannot exceed PhMax");
@@ -28,9 +30,7 @@ public class BeerService(AppDbContext db)
             ExtractMin = input.ExtractMin,
             ExtractMax = input.ExtractMax
         };
-
         Validate(beer);
-
         db.Beers.Add(beer);
         await db.SaveChangesAsync();
         return beer;
@@ -45,6 +45,8 @@ public class BeerService(AppDbContext db)
         var beer = await db.Beers.FindAsync(id);
         if (beer is null) return false;
 
+        // Atualização parcial: cada campo só é alterado se enviado (não-nulo),
+        // permitindo que o mesmo método sirva PUT e PATCH.
         if (input.Name is not null) beer.Name = input.Name;
         if (input.Style is not null) beer.Style = input.Style;
         if (input.TempMin is not null) beer.TempMin = input.TempMin.Value;
@@ -54,8 +56,9 @@ public class BeerService(AppDbContext db)
         if (input.ExtractMin is not null) beer.ExtractMin = input.ExtractMin.Value;
         if (input.ExtractMax is not null) beer.ExtractMax = input.ExtractMax.Value;
 
+        // Valida após aplicar as mudanças, sobre os valores finais — assim um update
+        // parcial que altere só o mínimo ainda é checado contra o máximo existente.
         Validate(beer);
-
         await db.SaveChangesAsync();
         return true;
     }
@@ -65,6 +68,9 @@ public class BeerService(AppDbContext db)
         var beer = await db.Beers.FindAsync(id);
         if (beer is null) return false;
 
+        // Bloqueia a exclusão se houver registros de fermentação vinculados: esse
+        // histórico é trilha de auditoria e não deve ser destruído junto. O
+        // middleware mapeia esta InvalidOperationException para 409 Conflict.
         var hasRecords = await db.FermentationRecords.AnyAsync(r => r.BeerId == id);
         if (hasRecords)
             throw new InvalidOperationException(
