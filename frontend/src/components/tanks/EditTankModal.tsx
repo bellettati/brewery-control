@@ -4,6 +4,9 @@ import { Modal } from "../Modal";
 import { useState } from "react";
 import type { Tank, UpdateTankRequest } from "../../api/types";
 import { validateTank } from "./validateTank";
+import { Field } from "../Field";
+import { TextInput } from "../inputs/TextInput";
+import { NumberInput } from "../inputs/NumberInput";
 
 export function EditTankModal({
   tank,
@@ -47,24 +50,18 @@ export function EditTankModal({
   return (
     <Modal title={`Editar ${tank.name}`} onClose={onClose}>
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <label className="flex flex-col text-sm text-grey">
-          Nome
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink"
+        <Field label="Nome" required>
+          <TextInput
             value={form.name ?? ""}
-            onChange={(e) => update("name", e.target.value)}
+            onChange={(v) => update("name", v)}
           />
-        </label>
-        <label className="flex flex-col text-sm text-grey">
-          Capacidade (L)
-          <input
-            type="number"
-            step="0.1"
-            className="border border-steel rounded px-3 py-2 text-ink"
+        </Field>
+        <Field label="Capacidade (L)" required>
+          <NumberInput
             value={form.capacityLiters!}
-            onChange={(e) => update("capacityLiters", Number(e.target.value))}
+            onChange={(v) => update("capacityLiters", v)}
           />
-        </label>
+        </Field>
       </div>
 
       {attempted && errors.length > 0 && (

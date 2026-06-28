@@ -4,6 +4,9 @@ import { Modal } from "../Modal";
 import { useState } from "react";
 import type { Beer, UpdateBeerRequest } from "../../api/types";
 import { validateBeer } from "./validateBeer";
+import { Field } from "../Field";
+import { TextInput } from "../inputs/TextInput";
+import { NumberInput } from "../inputs/NumberInput";
 
 export function EditBeerModal({
   beer,
@@ -59,43 +62,57 @@ export function EditBeerModal({
   return (
     <Modal title={`Editar ${beer.name}`} onClose={onClose}>
       <div className="grid grid-cols-2 gap-3 mb-3">
-        <input
-          className="border border-steel rounded px-3 py-2"
-          placeholder="Nome"
-          value={form.name ?? ""}
-          onChange={(e) => update("name", e.target.value)}
-        />
-        <input
-          className="border border-steel rounded px-3 py-2"
-          placeholder="Estilo"
-          value={form.style ?? ""}
-          onChange={(e) => update("style", e.target.value)}
-        />
+        <Field label="Nome" required>
+          <TextInput
+            value={form.name ?? ""}
+            onChange={(v) => update("name", v)}
+          />
+        </Field>
+        <Field label="Estilo" required>
+          <TextInput
+            value={form.style ?? ""}
+            onChange={(v) => update("style", v)}
+          />
+        </Field>
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <Num
-          label="Temp. mín"
-          v={form.tempMin!}
-          on={(v) => update("tempMin", v)}
-        />
-        <Num label="pH mín" v={form.phMin!} on={(v) => update("phMin", v)} />
-        <Num
-          label="Extrato mín"
-          v={form.extractMin!}
-          on={(v) => update("extractMin", v)}
-        />
-        <Num
-          label="Temp. máx"
-          v={form.tempMax!}
-          on={(v) => update("tempMax", v)}
-        />
-        <Num label="pH máx" v={form.phMax!} on={(v) => update("phMax", v)} />
-        <Num
-          label="Extrato máx"
-          v={form.extractMax!}
-          on={(v) => update("extractMax", v)}
-        />
+        <Field label="Temp. mín (°C)" required>
+          <NumberInput
+            value={form.tempMin!}
+            onChange={(v) => update("tempMin", v)}
+          />
+        </Field>
+        <Field label="pH mín" required>
+          <NumberInput
+            value={form.phMin!}
+            onChange={(v) => update("phMin", v)}
+          />
+        </Field>
+        <Field label="Extrato mín (°P)" required>
+          <NumberInput
+            value={form.extractMin!}
+            onChange={(v) => update("extractMin", v)}
+          />
+        </Field>
+        <Field label="Temp. máx (°C)" required>
+          <NumberInput
+            value={form.tempMax!}
+            onChange={(v) => update("tempMax", v)}
+          />
+        </Field>
+        <Field label="pH máx" required>
+          <NumberInput
+            value={form.phMax!}
+            onChange={(v) => update("phMax", v)}
+          />
+        </Field>
+        <Field label="Extrato máx (°P)" required>
+          <NumberInput
+            value={form.extractMax!}
+            onChange={(v) => update("extractMax", v)}
+          />
+        </Field>
       </div>
 
       <div className="bg-status-attention/20 border border-status-attention rounded p-3 text-sm text-ink mb-4">
@@ -110,7 +127,6 @@ export function EditBeerModal({
           ))}
         </ul>
       )}
-
       {mutation.isError && (
         <p className="text-status-out text-sm mb-3">
           {(mutation.error as Error).message}
@@ -133,28 +149,5 @@ export function EditBeerModal({
         </button>
       </div>
     </Modal>
-  );
-}
-
-function Num({
-  label,
-  v,
-  on,
-}: {
-  label: string;
-  v: number;
-  on: (v: number) => void;
-}) {
-  return (
-    <label className="flex flex-col text-sm text-grey">
-      {label}
-      <input
-        type="number"
-        step="0.1"
-        value={v}
-        onChange={(e) => on(Number(e.target.value))}
-        className="border border-steel rounded px-3 py-2 text-ink"
-      />
-    </label>
   );
 }

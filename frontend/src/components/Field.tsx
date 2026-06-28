@@ -12,7 +12,7 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <label className="flex flex-col text-sm text-grey">
+    <label className="flex flex-col gap-1 text-sm text-grey">
       <span>
         {label}
         {required && <span className="text-status-out"> *</span>}

@@ -9,6 +9,10 @@ import type {
   UpdateFermentationRecordRequest,
 } from "../../api/types";
 import { validateRecord } from "./validateRecord";
+import { Field } from "../Field";
+import { TextInput } from "../inputs/TextInput";
+import { NumberInput } from "../inputs/NumberInput";
+import { Select } from "../inputs/Select";
 
 export function EditRecordModal({
   record,
@@ -46,7 +50,7 @@ export function EditRecordModal({
     mutationFn: () => updateRecord(record.id, form),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["records"] });
-      await queryClient.invalidateQueries({ queryKey: ["dashboard"] }); // status may have changed
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       onClose();
     },
   });
@@ -69,12 +73,10 @@ export function EditRecordModal({
       onClose={onClose}
     >
       <div className="grid grid-cols-2 gap-3 mb-3">
-        <label className="flex flex-col text-sm text-grey">
-          Cerveja
-          <select
-            className="border border-steel rounded px-3 py-2 text-ink"
+        <Field label="Cerveja" required>
+          <Select
             value={Number(form.beerId)}
-            onChange={(e) => update("beerId", Number(e.target.value))}
+            onChange={(v) => update("beerId", Number(v))}
           >
             <option value={0} disabled>
               Selecione a cerveja
@@ -84,15 +86,13 @@ export function EditRecordModal({
                 {b.name}
               </option>
             ))}
-          </select>
-        </label>
+          </Select>
+        </Field>
 
-        <label className="flex flex-col text-sm text-grey">
-          Tanque
-          <select
-            className="border border-steel rounded px-3 py-2 text-ink"
+        <Field label="Tanque" required>
+          <Select
             value={Number(form.tankId)}
-            onChange={(e) => update("tankId", Number(e.target.value))}
+            onChange={(v) => update("tankId", Number(v))}
           >
             <option value={0} disabled>
               Selecione o tanque
@@ -102,56 +102,39 @@ export function EditRecordModal({
                 {t.name}
               </option>
             ))}
-          </select>
-        </label>
+          </Select>
+        </Field>
 
-        <label className="flex flex-col text-sm text-grey col-span-2">
-          Nº do lote
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink"
-            value={form.batchNumber ?? ""}
-            onChange={(e) => update("batchNumber", e.target.value)}
-          />
-        </label>
+        <div className="col-span-2">
+          <Field label="Nº do lote" required>
+            <TextInput
+              value={form.batchNumber ?? ""}
+              onChange={(v) => update("batchNumber", v)}
+            />
+          </Field>
+        </div>
 
-        <label className="flex flex-col text-sm text-grey">
-          Temperatura (°C)
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink"
-            type="number"
-            step="0.1"
+        <Field label="Temperatura (°C)" required>
+          <NumberInput
             value={form.temperature!}
-            onChange={(e) => update("temperature", Number(e.target.value))}
+            onChange={(v) => update("temperature", v)}
           />
-        </label>
-        <label className="flex flex-col text-sm text-grey">
-          pH
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink"
-            type="number"
-            step="0.1"
-            value={form.ph!}
-            onChange={(e) => update("ph", Number(e.target.value))}
-          />
-        </label>
-        <label className="flex flex-col text-sm text-grey">
-          Extrato (°P)
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink"
-            type="number"
-            step="0.1"
+        </Field>
+        <Field label="pH" required>
+          <NumberInput value={form.ph!} onChange={(v) => update("ph", v)} />
+        </Field>
+        <Field label="Extrato (°P)" required>
+          <NumberInput
             value={form.extract!}
-            onChange={(e) => update("extract", Number(e.target.value))}
+            onChange={(v) => update("extract", v)}
           />
-        </label>
-        <label className="flex flex-col text-sm text-grey">
-          Observações
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink"
+        </Field>
+        <Field label="Observações">
+          <TextInput
             value={form.observation ?? ""}
-            onChange={(e) => update("observation", e.target.value || null)}
+            onChange={(v) => update("observation", v || null)}
           />
-        </label>
+        </Field>
       </div>
 
       <div className="bg-status-attention/20 border border-status-attention rounded p-3 text-sm text-ink mb-4">

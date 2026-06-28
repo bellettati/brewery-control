@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { getRecords, getRecordsByBatch } from "../api/records";
 import { StatusBadge } from "../components/StatusBadge";
+import { Field } from "../components/Field";
+import { Select } from "../components/inputs/Select";
 import { useState } from "react";
 
 export function BatchHistoryPage() {
@@ -17,35 +19,38 @@ export function BatchHistoryPage() {
   const { data: history, isLoading } = useQuery({
     queryKey: ["records", "batch", batch],
     queryFn: () => getRecordsByBatch(batch),
-    enabled: batch !== "", // don't fetch until a batch is selected
+    enabled: batch !== "",
   });
 
   return (
     <div>
       <h1 className="text-2xl font-bold text-ink mb-6">Histórico de Lotes</h1>
 
-      <select
-        className="border border-steel rounded px-3 py-2 mb-6 bg-white"
-        value={batch}
-        onChange={(e) => setBatch(e.target.value)}
-      >
-        <option value="" disabled>
-          Selecione um lote
-        </option>
-        {batchNumbers.map((b) => (
-          <option key={b} value={b}>
-            {b}
-          </option>
-        ))}
-      </select>
+      <div className="max-w-xs mb-6">
+        <Field label="Lote">
+          <Select value={batch} onChange={setBatch}>
+            <option value="" disabled>
+              Selecione um lote
+            </option>
+            {batchNumbers.map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
+            ))}
+          </Select>
+        </Field>
+      </div>
 
       {batch === "" && (
         <p className="text-grey">Selecione um lote para ver sua evolução.</p>
       )}
       {isLoading && <p className="text-grey">Carregando...</p>}
+      {batch !== "" && !isLoading && history?.length === 0 && (
+        <p className="text-grey">Nenhum registro para este lote.</p>
+      )}
 
       {history && history.length > 0 && (
-        <table className="w-full bg-white rounded shadow-sm">
+        <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
           <thead className="bg-navy text-white text-left">
             <tr>
               <th className="p-3">Data</th>

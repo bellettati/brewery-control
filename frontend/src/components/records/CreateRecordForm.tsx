@@ -5,6 +5,10 @@ import { getTanks } from "../../api/tanks";
 import { useState } from "react";
 import type { CreateFermentationRecordRequest } from "../../api/types";
 import { validateRecord } from "./validateRecord";
+import { Field } from "../Field";
+import { TextInput } from "../inputs/TextInput";
+import { NumberInput } from "../inputs/NumberInput";
+import { Select } from "../inputs/Select";
 
 const empty: CreateFermentationRecordRequest = {
   beerId: 0,
@@ -22,7 +26,6 @@ export function CreateRecordForm() {
   const [form, setForm] = useState(empty);
   const [attempted, setAttempted] = useState(false);
 
-  // dropdowns are fed by their own queries — reusing the cache from the other screens
   const { data: beers } = useQuery({ queryKey: ["beers"], queryFn: getBeers });
   const { data: tanks } = useQuery({ queryKey: ["tanks"], queryFn: getTanks });
 
@@ -39,7 +42,7 @@ export function CreateRecordForm() {
     mutationFn: createRecord,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["records"] });
-      await queryClient.invalidateQueries({ queryKey: ["dashboard"] }); // counts changed too
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       setForm({ ...empty, recordedAt: new Date().toISOString() });
       setAttempted(false);
     },
@@ -57,7 +60,6 @@ export function CreateRecordForm() {
     if (errors.length === 0) mutation.mutate(form);
   }
 
-  // a date is always set (defaults to now); only override if the user picks one
   function handleDateChange(value: string) {
     update(
       "recordedAt",
@@ -69,10 +71,9 @@ export function CreateRecordForm() {
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <div className="grid grid-cols-3 gap-3">
         <Field label="Cerveja" required>
-          <select
-            className="border border-steel rounded px-3 py-2 text-ink w-full"
+          <Select
             value={form.beerId}
-            onChange={(e) => update("beerId", Number(e.target.value))}
+            onChange={(v) => update("beerId", Number(v))}
           >
             <option value={0} disabled>
               Selecione a cerveja
@@ -82,14 +83,13 @@ export function CreateRecordForm() {
                 {b.name}
               </option>
             ))}
-          </select>
+          </Select>
         </Field>
 
         <Field label="Tanque" required>
-          <select
-            className="border border-steel rounded px-3 py-2 text-ink w-full"
+          <Select
             value={form.tankId}
-            onChange={(e) => update("tankId", Number(e.target.value))}
+            onChange={(v) => update("tankId", Number(v))}
           >
             <option value={0} disabled>
               Selecione o tanque
@@ -99,44 +99,29 @@ export function CreateRecordForm() {
                 {t.name}
               </option>
             ))}
-          </select>
+          </Select>
         </Field>
 
         <Field label="Nº do lote" required>
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink w-full"
+          <TextInput
             value={form.batchNumber}
-            onChange={(e) => update("batchNumber", e.target.value)}
+            onChange={(v) => update("batchNumber", v)}
           />
         </Field>
 
         <Field label="Temperatura (°C)" required>
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink w-full"
-            type="number"
-            step="0.1"
+          <NumberInput
             value={form.temperature}
-            onChange={(e) => update("temperature", Number(e.target.value))}
+            onChange={(v) => update("temperature", v)}
           />
         </Field>
-
         <Field label="pH" required>
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink w-full"
-            type="number"
-            step="0.1"
-            value={form.ph}
-            onChange={(e) => update("ph", Number(e.target.value))}
-          />
+          <NumberInput value={form.ph} onChange={(v) => update("ph", v)} />
         </Field>
-
         <Field label="Extrato (°P)" required>
-          <input
-            className="border border-steel rounded px-3 py-2 text-ink w-full"
-            type="number"
-            step="0.1"
+          <NumberInput
             value={form.extract}
-            onChange={(e) => update("extract", Number(e.target.value))}
+            onChange={(v) => update("extract", v)}
           />
         </Field>
 
@@ -145,7 +130,8 @@ export function CreateRecordForm() {
           hint="Se vazio, será usada a data/hora atual."
         >
           <input
-            className="border border-steel rounded px-3 py-2 text-ink w-full"
+            className="border border-steel rounded-lg px-3 py-2 text-ink w-full
+                       focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
             type="datetime-local"
             onChange={(e) => handleDateChange(e.target.value)}
           />
@@ -153,10 +139,9 @@ export function CreateRecordForm() {
 
         <div className="col-span-2">
           <Field label="Observações">
-            <input
-              className="border border-steel rounded px-3 py-2 text-ink w-full"
+            <TextInput
               value={form.observation ?? ""}
-              onChange={(e) => update("observation", e.target.value || null)}
+              onChange={(v) => update("observation", v || null)}
             />
           </Field>
         </div>
@@ -178,29 +163,5 @@ export function CreateRecordForm() {
         {mutation.isPending ? "Salvando..." : "Registrar"}
       </button>
     </div>
-  );
-}
-
-// label wrapper: red asterisk for required, optional helper text below
-function Field({
-  label,
-  required = false,
-  hint,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="flex flex-col text-sm text-grey">
-      <span>
-        {label}
-        {required && <span className="text-status-out"> *</span>}
-      </span>
-      {children}
-      {hint && <span className="text-xs text-grey mt-1">{hint}</span>}
-    </label>
   );
 }
