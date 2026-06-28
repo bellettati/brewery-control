@@ -128,3 +128,53 @@ Relações:
 - **Escopo consciente**: cada entidade tem listagem + cadastro (as seis
   funcionalidades pedidas). Edição/exclusão e validação de formulário ficaram
   como melhorias, priorizando ter todas as telas funcionando dentro do prazo.
+
+## Exclusão condicional (integridade referencial)
+
+- **Cerveja e Tanque não podem ser excluídos enquanto houver registros de
+  fermentação associados.** O `BeerService`/`TankService` checa a existência de
+  registros antes de excluir e lança `InvalidOperationException`, mapeada para
+  **409 Conflict** no middleware. O histórico de fermentação é tratado como
+  trilha de auditoria (contexto regulatório do MAPA) e não deve ser destruído.
+- **Registro de fermentação pode ser excluído livremente** — é entidade folha,
+  ninguém depende dele. A assimetria é intencional: guardas só onde há dependentes.
+- No frontend, o modal de exclusão de cerveja/tanque conta os registros afetados
+  e, se houver, não oferece o botão de excluir (defesa nas duas camadas).
+- **Soft delete** (flag de inativo, preservando histórico) seria a evolução
+  natural — registrado como melhoria futura.
+
+## Validação em duas camadas
+
+- **Backend**: data annotations nos DTOs (campos obrigatórios, faixas válidas de
+  pH/temperatura/etc.) + regra de min ≤ max no service. É a garantia real.
+- **Frontend**: validadores espelhados (`validateBeer`, `validateTank`,
+  `validateRecord`) para feedback imediato, sem ida ao servidor.
+- A duplicação é intencional: o cliente dá resposta rápida, o servidor garante.
+
+## Reclassificação e invalidação de cache
+
+- Editar um registro **recalcula o Status** (a leitura pode ter cruzado um
+  limite), então as mutações de registro invalidam tanto `records` quanto
+  `dashboard`. Mutações de cerveja/tanque não tocam o dashboard.
+- Editar os parâmetros de uma cerveja **não** reclassifica registros antigos —
+  apenas novos registros usam as faixas atualizadas (decisão de escopo, sinalizada
+  ao usuário no modal). Reclassificar o histórico seria trabalho de backend extra.
+
+## Componentes de UI reutilizáveis
+
+- Primitivos de formulário compartilhados (`Field`, `TextInput`, `NumberInput`,
+  `Select`) padronizam espaçamento, foco e estilo em todas as telas. Todo
+  formulário compõe a partir deles em vez de inputs soltos.
+- `Button` (variantes primary/secondary/danger ligadas à paleta) e `IconButton`
+  são componentes distintos — botões com rótulo e fundo vs. ícones nus. Separar
+  evita props condicionais. `RowActions` agrupa o par editar/excluir das tabelas.
+- `cursor-pointer` embutido nos botões — o preflight do Tailwind remove o cursor
+  padrão de `<button>`, então foi reposto de forma centralizada.
+
+## Insights do dashboard (derivados no cliente)
+
+- Além dos contadores, o dashboard mostra distribuição geral, distribuição por
+  cerveja e um detalhamento por status (com a faixa esperada para leituras fora
+  do padrão). Tudo é derivado no cliente a partir dos endpoints existentes
+  (`records` + `beers`), sem endpoints de agregação dedicados — adequado ao
+  volume de dados deste desafio.

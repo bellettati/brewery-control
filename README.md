@@ -69,7 +69,7 @@ backend/
 frontend/
 └── src/
 ├── api/ # camada de API tipada (fetch + types)
-├── components/ # componentes reutilizáveis e formulários
+├── components/ # componentes reutilizáveis, formulários e inputs
 └── pages/ # telas (dashboard, cervejas, tanques, etc.)
 \`\`\`
 
@@ -87,6 +87,7 @@ frontend/
 - React + TypeScript + Vite
 - TanStack Query (estado de servidor)
 - Tailwind CSS v4
+- lucide-react (ícones)
 
 ## Respostas
 
@@ -108,50 +109,52 @@ Ver diagrama em /docs.
 - Validação de ranges (min ≤ max) e timestamps em UTC.
 - O Figma define um design system (cores, fonte, ícones), não telas prontas — o
   layout das telas foi definido por mim aplicando os tokens da marca.
+- Exclusão de cerveja/tanque bloqueada quando há histórico associado (preserva a
+  trilha de auditoria); registros podem ser excluídos livremente.
 
 ### 3. O que faria diferente / melhorias
 
 - Modelar Lote como entidade própria (início/fim de acompanhamento, relação
   formal com tanque).
+- Soft delete para cervejas/tanques, em vez de bloquear a exclusão.
+- Reclassificar registros existentes ao editar os parâmetros de uma cerveja.
 - Autenticação/autorização.
-- Histórico/versionamento dos parâmetros da cerveja.
-- Cobertura de testes além da regra de classificação.
-- Edição/exclusão e validação de formulário no frontend (priorizei ter todas as
-  telas funcionando dentro do prazo).
+- Cobertura de testes além da regra de classificação (ex.: testes de integração
+  dos endpoints).
 
 ### 4. Ferramentas de IA utilizadas
 
-Utilizei o Claude (Anthropic) como apoio ao longo de todo o desenvolvimento.
+Utilizei o Claude (Anthropic) como ferramenta de apoio ao longo do
+desenvolvimento, sempre conduzindo as decisões e usando a IA para acelerar a
+execução e validar abordagens.
 
-**Onde ajudou.** Por ser meu primeiro projeto em ASP.NET, usei a IA
-principalmente como ferramenta de aprendizado e aceleração: entender a estrutura
-de um projeto .NET (solution, csproj, camadas), o funcionamento do EF Core
-(DbContext, migrations, change tracking) e o padrão controller → service →
-DbContext. Também usei para acelerar trechos repetitivos (DTOs, mapeamentos,
-CRUDs análogos entre entidades) e, no frontend, para configurar o TanStack Query,
-que eu ainda não conhecia.
+**Direcionamento de arquitetura.** Conduzi as decisões de arquitetura discutindo
+trade-offs com a IA e mantendo o escopo proporcional ao desafio. Optei por um
+único projeto em camadas em vez de uma Clean Architecture multi-projeto, e por
+focar os testes na regra de classificação em vez de montar mocks e banco em
+memória. Em vários pontos recusei sugestões que adicionavam complexidade
+desnecessária — as decisões de escopo e arquitetura foram minhas; a IA ajudou a
+explorar alternativas mais rápido.
 
-**Direcionamento de arquitetura.** Usei a IA ativamente para discutir as decisões
-de arquitetura, buscando o equilíbrio entre código organizado e over-engineering.
-Em vários momentos questionei sugestões para manter o escopo proporcional ao
-desafio: optei por um único projeto com camadas em vez de uma Clean Architecture
-multi-projeto, e por testar só a regra de classificação em vez de montar mocks e
-banco em memória. As decisões de escopo foram minhas; a IA ajudou a explorar os
-trade-offs.
+**Onde acelerou.** Usei a IA para acelerar partes mecânicas e repetitivas (DTOs,
+mapeamentos, CRUDs análogos entre entidades) e para acelerar meu domínio de
+ferramentas que eu queria aplicar aqui — ASP.NET / EF Core no backend e TanStack
+Query no frontend —, transformando leitura de documentação em implementação mais
+rápida.
 
-**O que precisei corrigir.** Nem tudo veio pronto — revisei e corrigi várias
-sugestões:
+**O que revisei e corrigi.** Tratei toda saída da IA como rascunho a ser
+revisado, e ajustei o que não atendia aos padrões que defini:
 
-- Uma versão inicial deixava o DTO (camada HTTP) vazar para dentro do service;
-  percebi a inconsistência com a separação de camadas e introduzi input types
-  próprios da camada de serviço.
-- Uma sugestão de dashboard acessava o DbContext direto no controller; recusei e
-  movi a lógica para um `DashboardService`, mantendo o padrão das demais telas.
-- Um conflito de versões entre EF Core e Npgsql (a IA sugeriu uma versão
+- Uma sugestão deixava o DTO (camada HTTP) vazar para dentro do service; corrigi
+  introduzindo input types próprios da camada de serviço, mantendo a separação
+  de camadas consistente.
+- Uma versão do dashboard acessava o DbContext direto no controller; recusei e
+  movi a lógica para um `DashboardService`, alinhando com o padrão das demais telas.
+- Um conflito de versões entre EF Core e Npgsql (sugestão de uma versão
   inexistente para o Npgsql) precisou ser resolvido alinhando os pacotes
   manualmente.
 - Um `<App />` duplicado no `main.tsx` causava tela branca intermitente —
   diagnostiquei e removi.
 
-No geral, tratei a IA como um par para discutir decisões e acelerar o que eu já
-entendia, validando e ajustando o que ela gerou em vez de aceitar cegamente.
+No geral, conduzi o projeto e usei a IA como um par para discutir decisões e
+acelerar a execução, validando e ajustando tudo o que ela gerou.
