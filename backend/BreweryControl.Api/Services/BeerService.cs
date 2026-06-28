@@ -65,9 +65,13 @@ public class BeerService(AppDbContext db)
         var beer = await db.Beers.FindAsync(id);
         if (beer is null) return false;
 
+        var hasRecords = await db.FermentationRecords.AnyAsync(r => r.BeerId == id);
+        if (hasRecords)
+            throw new InvalidOperationException(
+                "Não é possível excluir uma cerveja que possui registros de fermentação.");
+
         db.Beers.Remove(beer);
         await db.SaveChangesAsync();
-
         return true;
     }
 }

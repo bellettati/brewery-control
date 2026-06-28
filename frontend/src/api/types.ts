@@ -57,6 +57,16 @@ export interface CreateBeerRequest {
   extractMin: number;
   extractMax: number;
 }
+export interface UpdateBeerRequest {
+  name: string | null;
+  style: string | null;
+  tempMin: number | null;
+  tempMax: number | null;
+  phMin: number | null;
+  phMax: number | null;
+  extractMin: number | null;
+  extractMax: number | null;
+}
 export interface CreateFermentationRecordRequest {
   beerId: number;
   tankId: number;
