@@ -6,10 +6,6 @@ import { RecordsPage } from "./pages/RecordsPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { BatchHistoryPage } from "./pages/BatchHistoryPage";
 
-function Placeholder({ name }: { name: string }) {
-  return <h1 className="text-2xl font-semibold text-ink">{name}</h1>;
-}
-
 function App() {
   return (
     <BrowserRouter>

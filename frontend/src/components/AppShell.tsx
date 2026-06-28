@@ -1,38 +1,49 @@
 import { NavLink, Outlet } from "react-router-dom";
+import logo from "../assets/arbrain-logo.svg";
+import {
+  LayoutDashboard,
+  Beer,
+  Cylinder,
+  ClipboardList,
+  History,
+} from "lucide-react";
 
 const links = [
-  { to: "/", label: "Dashboard", end: true },
-  { to: "/beers", label: "Cervejas", end: true },
-  { to: "/tanks", label: "Tanques", end: true },
-  { to: "/records", label: "Registros", end: true },
-  { to: "/batches", label: "Historico de Lotes", end: true },
+  { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/beers", label: "Cervejas", icon: Beer, end: true },
+  { to: "/tanks", label: "Tanques", icon: Cylinder, end: true },
+  { to: "/records", label: "Registros", icon: ClipboardList, end: true },
+  { to: "/batches", label: "Historico de Lotes", icon: History, end: true },
 ];
 
 export function AppShell() {
   return (
     <div className="flex min-h-screen font-sans">
-      <aside className="w-64 bg-navy text-white flex flex-col">
-        <div className="p-6 text-xl font-bold text-brand">ArBrain</div>
-        <nav className="flex flex-col gap-1 px-3">
-          {links.map((l) => (
+      <aside className="w-64 bg-mist text-white flex flex-col gap-8 rounded-br-2xl rounded-tr-2xl p-4">
+        <div className="text-xl font-bold text-brand">
+          <img src={logo} alt="ArBrain" className="h-10" />
+        </div>
+        <nav className="flex flex-col gap-2">
+          {links.map(({ to, label, icon: Icon, end }) => (
             <NavLink
-              key={l.to}
-              to={l.to}
-              end={l.end}
+              key={to}
+              to={to}
+              end={end}
               className={({ isActive }) =>
-                `px-3 py-2 rounded transition-colors ${
+                `rounded transition-colors text-sm border-b border-white/10 last:border-0 text-grey px-3 py-2 flex gap-2 ${
                   isActive
-                    ? "bg-brand text-ink"
-                    : "text-steel hover:bg-white/10"
+                    ? "bg-grey/10 text-ink font-semibold"
+                    : "hover:bg-grey/10"
                 }`
               }
             >
-              {l.label}
+              <Icon size={18} />
+              {label}
             </NavLink>
           ))}
         </nav>
       </aside>
-      <main className="flex-1 bg-mist p-8">
+      <main className="flex-1 bg-white p-8">
         <Outlet />
       </main>
     </div>
