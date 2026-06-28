@@ -3,6 +3,7 @@ import { createBeer } from "../../api/beers";
 import { useState } from "react";
 import type { CreateBeerRequest } from "../../api/types";
 import { validateBeer } from "./validateBeer";
+import { Field } from "../Field";
 
 const empty: CreateBeerRequest = {
   name: "",
@@ -19,7 +20,6 @@ export function CreateBeerForm() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<CreateBeerRequest>(empty);
   const [attempted, setAttempted] = useState(false);
-
   const errors = validateBeer(form);
 
   const mutation = useMutation({
@@ -46,48 +46,50 @@ export function CreateBeerForm() {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <div className="grid grid-cols-2 gap-3 mb-3">
-        <input
-          className="border border-steel rounded px-3 py-2"
-          placeholder="Nome"
-          value={form.name}
-          onChange={(e) => update("name", e.target.value)}
-        />
-        <input
-          className="border border-steel rounded px-3 py-2"
-          placeholder="Estilo"
-          value={form.style}
-          onChange={(e) => update("style", e.target.value)}
-        />
+        <Field label="Nome" required>
+          <input
+            className="border border-steel rounded px-3 py-2 text-ink w-full"
+            value={form.name}
+            onChange={(e) => update("name", e.target.value)}
+          />
+        </Field>
+        <Field label="Estilo" required>
+          <input
+            className="border border-steel rounded px-3 py-2 text-ink w-full"
+            value={form.style}
+            onChange={(e) => update("style", e.target.value)}
+          />
+        </Field>
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-3">
-        <NumberField
-          label="Temp. mín"
+        <NumField
+          label="Temp. mín (°C)"
           value={form.tempMin}
           onChange={(v) => update("tempMin", v)}
         />
-        <NumberField
+        <NumField
           label="pH mín"
           value={form.phMin}
           onChange={(v) => update("phMin", v)}
         />
-        <NumberField
-          label="Extrato mín"
+        <NumField
+          label="Extrato mín (°P)"
           value={form.extractMin}
           onChange={(v) => update("extractMin", v)}
         />
-        <NumberField
-          label="Temp. máx"
+        <NumField
+          label="Temp. máx (°C)"
           value={form.tempMax}
           onChange={(v) => update("tempMax", v)}
         />
-        <NumberField
+        <NumField
           label="pH máx"
           value={form.phMax}
           onChange={(v) => update("phMax", v)}
         />
-        <NumberField
-          label="Extrato máx"
+        <NumField
+          label="Extrato máx (°P)"
           value={form.extractMax}
           onChange={(v) => update("extractMax", v)}
         />
@@ -112,7 +114,8 @@ export function CreateBeerForm() {
   );
 }
 
-function NumberField({
+// numeric field built on the shared Field wrapper
+function NumField({
   label,
   value,
   onChange,
@@ -122,15 +125,14 @@ function NumberField({
   onChange: (v: number) => void;
 }) {
   return (
-    <label className="flex flex-col text-sm text-grey">
-      {label}
+    <Field label={label} required>
       <input
         type="number"
         step="0.1"
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="border border-steel rounded px-3 py-2 text-ink"
+        className="border border-steel rounded px-3 py-2 text-ink w-full"
       />
-    </label>
+    </Field>
   );
 }

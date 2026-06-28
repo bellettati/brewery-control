@@ -82,3 +82,14 @@ export interface CreateFermentationRecordRequest {
   recordedAt: string;
   observation: string | null;
 }
+
+export interface UpdateFermentationRecordRequest {
+  beerId: number | null;
+  tankId: number | null;
+  batchNumber: string | null;
+  temperature: number | null;
+  ph: number | null;
+  extract: number | null;
+  recordedAt: string | null;
+  observation: string | null;
+}
