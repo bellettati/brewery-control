@@ -14,18 +14,20 @@ Aplicação web para registro e acompanhamento de dados fermentativos de cerveja
 
 ### Banco de dados
 
-\`\`\`bash
+```bash
 docker run --name brewery-db -e POSTGRES_PASSWORD=dev -e POSTGRES_DB=brewery \
- -p 5432:5432 -d postgres
-\`\`\`
+  -p 5432:5432 -d postgres
+```
 
 ### Backend
 
-\`\`\`bash
+```bash
 cd backend/BreweryControl.Api
-dotnet ef database update # aplica as migrations
+dotnet restore               # restaura os pacotes NuGet
+dotnet ef database update    # aplica as migrations
 dotnet run
-\`\`\`
+```
+
 A API sobe em http://localhost:5042 (confira a porta no output).
 
 > Em ambiente de desenvolvimento, o banco é populado automaticamente na
@@ -35,43 +37,45 @@ A API sobe em http://localhost:5042 (confira a porta no output).
 
 ### Frontend
 
-\`\`\`bash
+```bash
 cd frontend
 npm install
 npm run dev
-\`\`\`
+```
+
 Abre em http://localhost:5173. O backend precisa estar rodando.
 
 ## Testes
 
-\`\`\`bash
+```bash
 cd backend
 dotnet test
-\`\`\`
+```
+
 Os testes cobrem a regra de classificação fermentativa (dentro do padrão,
 atenção, fora do padrão) e seus casos de limite. O escopo foi mantido focado
 na lógica de negócio central — ver DECISIONS.md para o racional.
 
 ## Estrutura do projeto
 
-\`\`\`
+```
 backend/
-├── BreweryControl.Api/ # API ASP.NET Core
-│ ├── Controllers/ # camada HTTP
-│ ├── Services/ # lógica de negócio + classificação
-│ │ └── Inputs/ # input types da camada de serviço
-│ ├── Models/ # entidades EF
-│ ├── Dtos/ # contratos da API (request/response)
-│ ├── Data/ # DbContext + migrations + seed
-│ └── Middleware/ # tratamento global de exceções
-└── BreweryControl.Tests/ # testes unitários (xUnit)
+├── BreweryControl.Api/      # API ASP.NET Core
+│   ├── Controllers/         # camada HTTP
+│   ├── Services/            # lógica de negócio + classificação
+│   │   └── Inputs/          # input types da camada de serviço
+│   ├── Models/              # entidades EF
+│   ├── Dtos/                # contratos da API (request/response)
+│   ├── Data/                # DbContext + migrations + seed
+│   └── Middleware/          # tratamento global de exceções
+└── BreweryControl.Tests/    # testes unitários (xUnit)
 
 frontend/
 └── src/
-├── api/ # camada de API tipada (fetch + types)
-├── components/ # componentes reutilizáveis, formulários e inputs
-└── pages/ # telas (dashboard, cervejas, tanques, etc.)
-\`\`\`
+    ├── api/                 # camada de API tipada (fetch + types)
+    ├── components/          # componentes reutilizáveis, formulários e inputs
+    └── pages/               # telas (dashboard, cervejas, tanques, etc.)
+```
 
 ## Tecnologias
 
