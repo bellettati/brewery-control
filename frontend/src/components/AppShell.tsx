@@ -18,8 +18,8 @@ const links = [
 
 export function AppShell() {
   return (
-    <div className="flex min-h-screen font-sans">
-      <aside className="w-64 bg-mist text-white flex flex-col gap-8 rounded-br-2xl rounded-tr-2xl p-4">
+    <div className="flex min-h-screen font-sans bg-mist">
+      <aside className="w-64 bg-white text-white flex flex-col gap-8 rounded-br-2xl rounded-tr-2xl p-4">
         <div className="text-xl font-bold text-brand">
           <img src={logo} alt="ArBrain" className="h-10" />
         </div>
@@ -43,7 +43,7 @@ export function AppShell() {
           ))}
         </nav>
       </aside>
-      <main className="flex-1 bg-white p-8">
+      <main className="flex-1 p-8 bg-mist">
         <Outlet />
       </main>
     </div>
