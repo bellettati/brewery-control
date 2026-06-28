@@ -4,7 +4,7 @@ import { CreateRecordForm } from "../components/records/CreateRecordForm";
 import { EditRecordModal } from "../components/records/EditRecordModal";
 import { DeleteRecordModal } from "../components/records/DeleteRecordModal";
 import { StatusBadge } from "../components/StatusBadge";
-import { Pencil, Trash2 } from "lucide-react";
+import { RowActions } from "../components/RowActions";
 import { useState } from "react";
 import type { FermentationRecord } from "../api/types";
 
@@ -27,7 +27,6 @@ export function RecordsPage() {
         Registros de Fermentação
       </h1>
       <CreateRecordForm />
-
       <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
         <thead className="bg-navy text-white text-left">
           <tr>
@@ -65,28 +64,15 @@ export function RecordsPage() {
                 <StatusBadge status={r.status} />
               </td>
               <td className="p-3">
-                <div className="flex gap-2 justify-end">
-                  <button
-                    onClick={() => setEditing(r)}
-                    className="text-navy hover:text-brand"
-                    title="Editar"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    onClick={() => setDeleting(r)}
-                    className="text-grey hover:text-status-out"
-                    title="Excluir"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+                <RowActions
+                  onEdit={() => setEditing(r)}
+                  onDelete={() => setDeleting(r)}
+                />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
       {editing && (
         <EditRecordModal record={editing} onClose={() => setEditing(null)} />
       )}

@@ -9,6 +9,7 @@ import { Field } from "../Field";
 import { TextInput } from "../inputs/TextInput";
 import { NumberInput } from "../inputs/NumberInput";
 import { Select } from "../inputs/Select";
+import { Button } from "../inputs/Button";
 
 const empty: CreateFermentationRecordRequest = {
   beerId: 0,
@@ -155,13 +156,13 @@ export function CreateRecordForm() {
         </ul>
       )}
 
-      <button
-        className="bg-brand text-ink font-semibold px-4 py-2 rounded disabled:opacity-50 mt-3"
-        disabled={mutation.isPending}
+      <Button
         onClick={handleSubmit}
+        disabled={mutation.isPending}
+        className="mt-3"
       >
         {mutation.isPending ? "Salvando..." : "Registrar"}
-      </button>
+      </Button>
     </div>
   );
 }

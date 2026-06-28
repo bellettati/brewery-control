@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteRecord } from "../../api/records";
 import { Modal } from "../Modal";
+import { Button } from "../inputs/Button";
 import type { FermentationRecord } from "../../api/types";
 
 export function DeleteRecordModal({
@@ -11,7 +12,6 @@ export function DeleteRecordModal({
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
-
   const mutation = useMutation({
     mutationFn: () => deleteRecord(record.id),
     onSuccess: async () => {
@@ -36,19 +36,16 @@ export function DeleteRecordModal({
       )}
 
       <div className="flex gap-3 justify-end">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 rounded border border-steel text-ink"
-        >
+        <Button variant="secondary" onClick={onClose}>
           Cancelar
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="danger"
           onClick={() => mutation.mutate()}
           disabled={mutation.isPending}
-          className="px-4 py-2 rounded bg-status-out text-ink font-semibold disabled:opacity-50"
         >
           {mutation.isPending ? "Excluindo..." : "Excluir"}
-        </button>
+        </Button>
       </div>
     </Modal>
   );

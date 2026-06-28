@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 type Props = {
   value: string | number;
   onChange: (v: string) => void;
-  children: ReactNode; // the <option>s
+  children: ReactNode;
 };
 
 export function Select({ value, onChange, children }: Props) {

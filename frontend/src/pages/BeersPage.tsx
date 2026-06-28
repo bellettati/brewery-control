@@ -3,7 +3,7 @@ import { getBeers } from "../api/beers";
 import { CreateBeerForm } from "../components/beers/CreateBeerForm";
 import { DeleteBeerModal } from "../components/beers/DeleteBeerModal";
 import { EditBeerModal } from "../components/beers/EditBeerModal";
-import { Pencil, Trash2 } from "lucide-react";
+import { RowActions } from "../components/RowActions";
 import { useState } from "react";
 import type { Beer } from "../api/types";
 
@@ -24,7 +24,6 @@ export function BeersPage() {
     <div>
       <h1 className="text-2xl font-bold text-ink mb-6">Cervejas</h1>
       <CreateBeerForm />
-
       <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
         <thead className="bg-navy text-white text-left">
           <tr>
@@ -58,28 +57,15 @@ export function BeersPage() {
                 {b.extractMin}–{b.extractMax}°P
               </td>
               <td className="p-3">
-                <div className="flex gap-2 justify-end">
-                  <button
-                    onClick={() => setEditing(b)}
-                    className="text-navy hover:text-brand cursor-pointer"
-                    title="Editar"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    onClick={() => setDeleting(b)}
-                    className="text-grey hover:text-status-out cursor-pointer"
-                    title="Excluir"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+                <RowActions
+                  onEdit={() => setEditing(b)}
+                  onDelete={() => setDeleting(b)}
+                />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
       {editing && (
         <EditBeerModal beer={editing} onClose={() => setEditing(null)} />
       )}

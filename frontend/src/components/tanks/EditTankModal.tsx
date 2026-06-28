@@ -7,6 +7,7 @@ import { validateTank } from "./validateTank";
 import { Field } from "../Field";
 import { TextInput } from "../inputs/TextInput";
 import { NumberInput } from "../inputs/NumberInput";
+import { Button } from "../inputs/Button";
 
 export function EditTankModal({
   tank,
@@ -78,19 +79,12 @@ export function EditTankModal({
       )}
 
       <div className="flex gap-3 justify-end">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 rounded border border-steel text-ink"
-        >
+        <Button variant="secondary" onClick={onClose}>
           Cancelar
-        </button>
-        <button
-          onClick={handleSubmit}
-          disabled={mutation.isPending}
-          className="px-4 py-2 rounded bg-brand text-ink font-semibold disabled:opacity-50"
-        >
+        </Button>
+        <Button onClick={handleSubmit} disabled={mutation.isPending}>
           {mutation.isPending ? "Salvando..." : "Salvar"}
-        </button>
+        </Button>
       </div>
     </Modal>
   );

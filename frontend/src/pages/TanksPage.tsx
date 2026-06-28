@@ -3,7 +3,7 @@ import { getTanks } from "../api/tanks";
 import { CreateTankForm } from "../components/tanks/CreateTankForm";
 import { EditTankModal } from "../components/tanks/EditTankModal";
 import { DeleteTankModal } from "../components/tanks/DeleteTankModal";
-import { Pencil, Trash2 } from "lucide-react";
+import { RowActions } from "../components/RowActions";
 import { useState } from "react";
 import type { Tank } from "../api/types";
 
@@ -24,7 +24,6 @@ export function TanksPage() {
     <div>
       <h1 className="text-2xl font-bold text-ink mb-6">Tanques</h1>
       <CreateTankForm />
-
       <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
         <thead className="bg-navy text-white text-left">
           <tr>
@@ -46,28 +45,15 @@ export function TanksPage() {
               <td className="p-3">{t.name}</td>
               <td className="p-3">{t.capacityLiters}</td>
               <td className="p-3">
-                <div className="flex gap-2 justify-end">
-                  <button
-                    onClick={() => setEditing(t)}
-                    className="text-navy hover:text-brand"
-                    title="Editar"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    onClick={() => setDeleting(t)}
-                    className="text-grey hover:text-status-out"
-                    title="Excluir"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+                <RowActions
+                  onEdit={() => setEditing(t)}
+                  onDelete={() => setDeleting(t)}
+                />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
       {editing && (
         <EditTankModal tank={editing} onClose={() => setEditing(null)} />
       )}

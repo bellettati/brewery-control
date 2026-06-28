@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Field } from "../Field";
 import { TextInput } from "../inputs/TextInput";
 import { NumberInput } from "../inputs/NumberInput";
+import { Button } from "../inputs/Button";
 import { validateTank } from "./validateTank";
 
 export function CreateTankForm() {
@@ -49,13 +50,13 @@ export function CreateTankForm() {
         </ul>
       )}
 
-      <button
-        className="bg-brand text-ink font-semibold px-4 py-2 rounded disabled:opacity-50 mt-3"
-        disabled={mutation.isPending}
+      <Button
         onClick={handleSubmit}
+        disabled={mutation.isPending}
+        className="mt-3"
       >
         {mutation.isPending ? "Salvando..." : "Adicionar"}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { validateBeer } from "./validateBeer";
 import { Field } from "../Field";
 import { TextInput } from "../inputs/TextInput";
 import { NumberInput } from "../inputs/NumberInput";
+import { Button } from "../inputs/Button";
 
 const empty: CreateBeerRequest = {
   name: "",
@@ -103,13 +104,9 @@ export function CreateBeerForm() {
         </ul>
       )}
 
-      <button
-        className="bg-brand text-ink font-semibold px-4 py-2 rounded disabled:opacity-50"
-        disabled={mutation.isPending}
-        onClick={handleSubmit}
-      >
+      <Button onClick={handleSubmit} disabled={mutation.isPending}>
         {mutation.isPending ? "Salvando..." : "Adicionar Cerveja"}
-      </button>
+      </Button>
     </div>
   );
 }

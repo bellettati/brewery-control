@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteTank } from "../../api/tanks";
 import { getRecords } from "../../api/records";
 import { Modal } from "../Modal";
+import { Button } from "../inputs/Button";
 import type { Tank } from "../../api/types";
 
 export function DeleteTankModal({
@@ -49,20 +50,17 @@ export function DeleteTankModal({
       )}
 
       <div className="flex gap-3 justify-end">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 rounded border border-steel text-ink"
-        >
+        <Button variant="secondary" onClick={onClose}>
           {blocked ? "Fechar" : "Cancelar"}
-        </button>
+        </Button>
         {!blocked && (
-          <button
+          <Button
+            variant="danger"
             onClick={() => mutation.mutate()}
             disabled={mutation.isPending}
-            className="px-4 py-2 rounded bg-status-out text-ink font-semibold disabled:opacity-50"
           >
             {mutation.isPending ? "Excluindo..." : "Excluir"}
-          </button>
+          </Button>
         )}
       </div>
     </Modal>
