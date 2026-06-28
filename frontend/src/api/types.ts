@@ -47,6 +47,11 @@ export interface CreateTankRequest {
   name: string;
   capacityLiters: number;
 }
+export interface UpdateTankRequest {
+  name: string | null;
+  capacityLiters: number | null;
+}
+
 export interface CreateBeerRequest {
   name: string;
   style: string;

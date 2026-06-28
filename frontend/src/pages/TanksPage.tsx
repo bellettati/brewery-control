@@ -1,16 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTanks } from "../api/tanks";
 import { CreateTankForm } from "../components/tanks/CreateTankForm";
+import { EditTankModal } from "../components/tanks/EditTankModal";
+import { DeleteTankModal } from "../components/tanks/DeleteTankModal";
+import { Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import type { Tank } from "../api/types";
 
 export function TanksPage() {
   const {
     data: tanks,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ["tanks"],
-    queryFn: getTanks,
-  });
+  } = useQuery({ queryKey: ["tanks"], queryFn: getTanks });
+  const [editing, setEditing] = useState<Tank | null>(null);
+  const [deleting, setDeleting] = useState<Tank | null>(null);
 
   if (isLoading) return <p className="text-grey">Carregando...</p>;
   if (error)
@@ -18,24 +22,58 @@ export function TanksPage() {
 
   return (
     <div>
-      <CreateTankForm />
       <h1 className="text-2xl font-bold text-ink mb-6">Tanques</h1>
-      <table className="w-full bg-white rounded shadow-sm">
+      <CreateTankForm />
+
+      <table className="w-full bg-white rounded-lg shadow-sm overflow-hidden">
         <thead className="bg-navy text-white text-left">
           <tr>
             <th className="p-3">Nome</th>
             <th className="p-3">Capacidade (L)</th>
+            <th className="p-3 text-right">Ações</th>
           </tr>
         </thead>
         <tbody>
+          {tanks?.length === 0 && (
+            <tr>
+              <td colSpan={3} className="p-4 text-grey text-center">
+                Nenhum tanque cadastrado.
+              </td>
+            </tr>
+          )}
           {tanks?.map((t) => (
             <tr key={t.id} className="border-b border-mist">
               <td className="p-3">{t.name}</td>
               <td className="p-3">{t.capacityLiters}</td>
+              <td className="p-3">
+                <div className="flex gap-2 justify-end">
+                  <button
+                    onClick={() => setEditing(t)}
+                    className="text-navy hover:text-brand"
+                    title="Editar"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <button
+                    onClick={() => setDeleting(t)}
+                    className="text-grey hover:text-status-out"
+                    title="Excluir"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {editing && (
+        <EditTankModal tank={editing} onClose={() => setEditing(null)} />
+      )}
+      {deleting && (
+        <DeleteTankModal tank={deleting} onClose={() => setDeleting(null)} />
+      )}
     </div>
   );
 }

@@ -30,10 +30,15 @@ public class TankService(AppDbContext db)
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id) 
+    public async Task<bool> DeleteAsync(int id)
     {
         var tank = await db.Tanks.FindAsync(id);
         if (tank is null) return false;
+
+        var hasRecords = await db.FermentationRecords.AnyAsync(r => r.TankId == id);
+        if (hasRecords)
+            throw new InvalidOperationException(
+                "Não é possível excluir um tanque que possui registros de fermentação.");
 
         db.Tanks.Remove(tank);
         await db.SaveChangesAsync();
